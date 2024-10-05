@@ -1,7 +1,7 @@
 import platform
 import chromedriver_binary_sync
 import pandas as pd
-from scripts.html_render import save_html_as_png
+from scripts.html_playwright_render import save_html_as_png
 
 
 # ツイートURLをランダムで抽出
