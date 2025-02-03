@@ -22,16 +22,107 @@ def get_tweet_embedcode(tweet_url):
 
 def is_tweet_rendered(page):
     """
-    ツイートのレンダリング状況を、ツイートコンテナ（<blockquote class="twitter-tweet">）の高さで判定する。
-    例として高さが50px以上ならレンダリング成功と判断する。
+    ツイートのレンダリング状況を複数の条件で判定する：
+    1. ツイートコンテナが存在し、レンダリング完了クラスを持っていること
+    2. コンテナが表示されていること（高さ > 0）
+    3. display: flexが設定されていること
+    4. ドキュメントの読み込みが完了していること
     """
     try:
-        # 少し待ってからツイートコンテナの高さを評価
-        return page.evaluate("""() => {
+        debug_info = page.evaluate("""() => {
             const container = document.querySelector('.twitter-tweet');
-            if (!container) return false;
-            return container.getBoundingClientRect().height > 50;
+            const iframe = document.querySelector('iframe[id^="twitter-widget"]');
+            const widgetsScript = document.querySelector('script[src*="platform.twitter.com/widgets.js"]');
+            
+            // コンテナのスタイル情報を取得
+            const containerStyle = container ? window.getComputedStyle(container) : null;
+            const isRendered = container ? container.classList.contains('twitter-tweet-rendered') : false;
+            const displayFlex = containerStyle ? containerStyle.display === 'flex' : false;
+            
+            // デバッグ情報の収集
+            const info = {
+                containerExists: !!container,
+                containerHeight: container ? container.getBoundingClientRect().height : 0,
+                iframeExists: !!iframe,
+                isRendered: isRendered,
+                displayFlex: displayFlex,
+                htmlStructure: document.body.innerHTML,
+                documentState: document.readyState,
+                errors: [],
+                networkRequests: performance.getEntriesByType('resource').map(entry => ({
+                    name: entry.name,
+                    duration: entry.duration,
+                    status: entry.responseStatus
+                }))
+            };
+            
+            // エラーコンソールの取得
+            if (window.console && console.error) {
+                const originalError = console.error;
+                const errors = [];
+                console.error = (...args) => {
+                    errors.push(args.join(' '));
+                    originalError.apply(console, args);
+                };
+                // エラー情報を収集
+                info.errors = errors;
+            }
+            
+            return info;
         }""")
+
+        # デバッグ情報の出力
+        print("\n=== Tweet Rendering Debug Info ===")
+        print(f"Container exists: {debug_info['containerExists']}")
+        print(f"Container height: {debug_info['containerHeight']}px")
+        print(f"iframe exists: {debug_info['iframeExists']}")
+        print(f"Rendered class: {debug_info['isRendered']}")
+        print(f"Display flex: {debug_info['displayFlex']}")
+        print(f"Document state: {debug_info['documentState']}")
+
+        if debug_info["networkRequests"]:
+            print("\nNetwork Requests:")
+            for req in debug_info["networkRequests"]:
+                print(f"- {req['name']}: {req['duration']}ms (Status: {req['status']})")
+
+        if debug_info["errors"]:
+            print("\nErrors found:")
+            for error in debug_info["errors"]:
+                print(f"- {error}")
+
+        print("\nHTML Structure:")
+        print(
+            debug_info["htmlStructure"][:500] + "..."
+            if len(debug_info["htmlStructure"]) > 500
+            else debug_info["htmlStructure"]
+        )
+        print("================================\n")
+
+        # レンダリング成功の判定
+        is_rendered = (
+            debug_info["containerExists"]
+            and debug_info["containerHeight"] > 0  # コンテナが表示されていること
+            and debug_info["isRendered"]  # twitter-tweet-renderedクラスの存在
+            and debug_info["displayFlex"]  # display: flexの確認
+            and debug_info["documentState"] == "complete"
+        )
+
+        if not is_rendered:
+            print("\nRendering failed due to:")
+            if not debug_info["containerExists"]:
+                print("- Tweet container not found")
+            if debug_info["containerHeight"] <= 0:
+                print("- Container height is zero")
+            if not debug_info["isRendered"]:
+                print("- Tweet not fully rendered")
+            if not debug_info["displayFlex"]:
+                print("- Display flex not set")
+            if debug_info["documentState"] != "complete":
+                print("- Document loading not complete")
+
+        print(f"Rendering status: {'Success' if is_rendered else 'Failed'}")
+        return is_rendered
+
     except Exception as e:
         print("Error evaluating tweet container:", e)
         return False
@@ -72,28 +163,36 @@ def save_html_as_png(
             # ローカルHTMLファイルのパスを生成
             local_url = "file://" + os.path.abspath(file_name)
 
-            # レンダリング完了の再試行（最大3回）
-            max_attempts = 3
+            # レンダリング完了の再試行（最大4回、ブラウザの再起動を含む）
+            max_attempts = 4
             attempt = 0
             rendered = False
 
             while attempt < max_attempts and not rendered:
                 print(f"[{render_url}] Attempt {attempt+1} / {max_attempts}")
-                page.goto(local_url, wait_until="networkidle")
 
-                # もともとのコードと同様に、JavaScript実行待機
+                if attempt > 0:
+                    # 2回目以降の試行では、ブラウザを再起動
+                    print("ブラウザを再起動して再試行します...")
+                    browser.close()
+                    browser = playwright.chromium.launch(headless=True)
+                    context = browser.new_context()
+                    page = context.new_page()
+
+                page.goto(local_url, wait_until="networkidle")
                 page.wait_for_timeout(3000)  # 初回待機（3秒）
                 page.set_viewport_size({"width": 512, "height": 768})
-                page.wait_for_timeout(10000)  # レンダリング完了待機（10秒）
+                page.wait_for_timeout(8000)  # レンダリング完了待機（8秒）
 
                 if is_tweet_rendered(page):
                     rendered = True
                     print("レンダリングが正常に完了しました。")
                 else:
                     attempt += 1
-                    print(f"レンダリング未完了。再試行 {attempt}/{max_attempts} ...")
-                    page.reload(wait_until="networkidle")
-                    page.wait_for_timeout(3000)
+                    if attempt < max_attempts:
+                        print(
+                            f"レンダリング未完了。再試行 {attempt}/{max_attempts} ..."
+                        )
 
             if not rendered:
                 print(
