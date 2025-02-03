@@ -12,7 +12,10 @@ df_urls_date = df_urls_date.dropna(subset=["url"])
 
 # ---- ランダム抽出 ----
 df_selected_urls = (
-    df_urls_date["url"].drop_duplicates().sample(n=image_num, replace=False).sort_index(ascending=True)
+    df_urls_date["url"]
+    .drop_duplicates()
+    .sample(n=image_num, replace=False)
+    .sort_index(ascending=True)
 )
 
 # # ---- 新着順で抽出 ----
