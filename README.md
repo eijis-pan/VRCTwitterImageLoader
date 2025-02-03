@@ -31,9 +31,9 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
    - [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`df_selected_urls`の実装方法2種類の片方をコメントアウトすることで[ランダム/新着]を選択できます。
 
 2. 同じURLに対する画像の差し替え頻度は初期設定では1日一回（日替わり）ですが、もっと短いスパンに変更することも可能です。
-- [upload_randam_images.yml](.github/workflows/upload_randam_images.yml)の`schedule:`のcronを書き換えることで、例えば3時間ごとの更新にもできます。
-    - 2025年2月現在、GitHub無料アカウントはGitHub Actionsの実行時間が2000分/月に制限されています。
-    - このCI/CDの実行時間は3分程度のため、GitHub無料アカウントにおける最短実行間隔は約70分に1回だと考えられます。
+   - [upload_randam_images.yml](.github/workflows/upload_randam_images.yml)の`schedule:`のcronを書き換えることで、例えば3時間ごとの更新にもできます。
+       - 2025年2月現在、GitHub無料アカウントはGitHub Actionsの実行時間が2000分/月に制限されています。
+       - このCI/CDの実行時間は3分程度のため、GitHub無料アカウントにおける最短実行間隔は約70分に1回だと考えられます。
 
 3. Xの投稿をリストに収集する頻度と一回当たりの収集数は、Xの開発者アカウントのグレードに依存します。
    - 2025年2月現在、無料アカウントは100回&50件/月に制限されています。
@@ -65,7 +65,7 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
     - 「Settings」→「Pages」セクションで以下を設定:
         - 「Build and deployment」→「Source」を"Github Actions"に変更
         - 「Settings」→「Environments」に"github-pages"という環境変数が自動的に作成されていることを確認
-1. ここまでの変更をmasterブランチにpushすれば完了です。初期設定では、毎週2回水曜と土曜の3:00に[urls_orig_date.csv](src/VRCTwitterImageLoader/data/urls_orig_date.csv)の中身が更新され、毎日4:00にその中からランダムで10件の投稿が下記のURLに配信されます。
+1. ここまでの変更がmasterブランチに反映(push)されていれば完了です。初期設定では、毎週2回水曜と土曜の3:00に[urls_orig_date.csv](src/VRCTwitterImageLoader/data/urls_orig_date.csv)の中身の更新が提案され、毎日4:00にその中からランダムで10件の投稿が下記のURLに配信されます。
     - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_0.png`
     - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_1.png`
     - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_2.png`
@@ -98,7 +98,7 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
 > 
 > ローカル実行の場合、GitHub Pagesへの画像アップロードは実行されません。
 
-- 動作確認済環境
+- 動作確認済の環境
     - Windows11
     - Ubuntu22.04
     - Ubuntu24.04 (WSL2)
