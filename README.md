@@ -45,29 +45,46 @@ Xの投稿をリストに収集する頻度と一回当たりの収集数は、X
     - 動作するためには少なくとも10件の投稿が必要です。
     - `url`列と`date`列の2列がカンマ区切りで必要です。
 1. [x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)内の変数`x_hash_tag_str`を収集対象のハッシュタグに変更してください。
+    - 初期設定では`#Quest散歩`になっています。
 1. [X開発者ページ](https://developer.twitter.com/en/portal/dashboard)にログイン(Freeアカウントでも可)し、BEARER TOKENを発行してください。
-1. GitHub ActionsのRepository Secretsに`X_BEARER_TOKEN`というKeyで、4.で発行したTokenの値を保存してください。
+1. GitHub ActionsのRepository Secretsに4.で発行したTokenの値を保存してください。
+    - 「Settings」→「Security」→「Actions」→「Repository secrets」セクションで、「New Repository secret」をクリック
+        - Name: `X_BEARER_TOKEN`
+        - Secret: Tokenの値（AAAA....）を貼り付け
+    - 「Add secret」をクリック
 1. 下記の操作で、リポジトリのGitHub ActionsにPull Requestの権限を付与してください。
-    - 「Settings」→「Actions」→「General」→ Workflow permissions」セクションで以下を設定:
+    - 「Settings」→「Actions」→「General」→ 「Workflow permissions」セクションで以下を設定:
         - "Read and write permissions"を選択
         - "Allow GitHub Actions to create and approve pull requests"にチェック
+        - 「Save」をクリック
 1. 下記の操作で、リポジトリのGitHub PagesがActionsからデプロイされるように変更してください。
     - 「Settings」→「Pages」セクションで以下を設定:
         - 「Build and deployment」→「Source」を"Github Actions"に変更
         - 「Settings」→「Environments」に"github-pages"という環境変数が自動的に作成されていることを確認
 1. ここまでの変更をmasterブランチにpushすれば完了です。初期設定では、毎週2回水曜と土曜の3:00に[urls_orig_date.csv](src/VRCTwitterImageLoader/data/urls_orig_date.csv)の中身が更新され、毎日4:00にその中からランダムで10件の投稿が下記のURLに配信されます。
-    - https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_0.png
-    - https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_1.png
-    - https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_2.png
+    - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_0.png`
+    - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_1.png`
+    - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_2.png`
     - ...
-    - https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_9.png
+    - `https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/images/screenshot_9.png`
 
         - 画像はスクリプト実行ごとに上書き変更されますが、画像URLは常に固定です。
             - 画像一覧のサンプル: https://varyuvrc.github.io/VRCTwitterImageLoader/
         - 画像数を変更したい場合は、[twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`image_num`の値と、[index.html](src/VRCTwitterImageLoader/pages/index.html)の中身を変更してください。
 1. 定時実行を待たずに[.github/workflows](.github/workflows)内のCI/CDスクリプトをGitHub Webの"Actions"ページで手動実行することも可能です。
+    - リポジトリのActionsタブに移動
+    - 「All workflows」の"Update URLs list"か"Upload Random Images"をクリック
+    - 「Run workflow」タブ内の「Run workflow」ボタンをクリックし実行を待つ
+    - 緑色のアイコン（成功）になればOK
+        - 赤色のアイコン（失敗）になった場合は、上記設定を見直してください。
+        - それでも直らない場合は不具合報告（このページ下部）してください。
+    - "Upload Random Images"実行に成功すると、`https://{GitHubアカウント名}.github.io/VRCTwitterImageLoader/`にデプロイされたGitHub PagesにXの投稿画像が配信されます。
 1. VRChat UdonのImage Loadingを使用して上記URLから画像を取得することで、ワールド内で毎日更新されるテクスチャとして扱うことができます。画像サイズは 512 x 768 pxです。
 1. 「[urls_orig_date.csv](src/VRCTwitterImageLoader/data/urls_orig_date.csv)の中身の更新」は勝手には行われず、masterブランチへのPull Requestで通知されます。内容に問題がなければMergeしてください。
+    - リポジトリの「Pull requests」タブ→ 発行されたPRをクリック
+    - 「Files changed」で差分を確認
+    - 「Conversation」に戻り、「Merge pull request」→「Confirm merge」をクリック
+    - 最後に「Delete branch」をクリックするとPR用に作成されたブランチが削除されて完了
 
 ### ローカルで動作確認
 **-----基本的にこれより下の操作を行う必要はありません。-----** 
