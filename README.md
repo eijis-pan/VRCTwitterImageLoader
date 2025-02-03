@@ -4,15 +4,17 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
 
 このGitHub Pagesの画像URLは固定のため、例えばVRChatのImage Loadingの仕組みと組み合わせることで、ワールド内でXの投稿を眺めることが可能です。
 
+使用例: https://x.com/Ring_Say_rip/status/1731264158828753358
+
 >[!NOTE]
 > **すべての動作はGitHub上で完結しているため、サーバを個人で建てる必要がありません。**
 > 
 > **2025年2月現在、無料ですべてのプログラムが動作します。**
 
-使用例: https://x.com/Ring_Say_rip/status/1731264158828753358
 - VRChatでこのシステムの画像を読み込むのは簡単ですが、前提としてワールド制作の知識が必要です。
     - Image Loadingについて: [Image Loading | VRChat](https://creators.vrchat.com/worlds/udon/image-loading/)
-    - Udon SharpでImage Loadingを実装する一例として、namanonamako 氏のアセット [【無料】WebPhotoStand【VRChat】](https://namanonamako.booth.pm/items/4702922)がおすすめです。
+      - [VRChat公式のサンプル](https://creators.vrchat.com/worlds/examples/image-loading)には、`SlideshowFrame`プレハブが用意されています。
+    - Udon SharpでImage Loadingを実装する一例として、namanonamako 氏のアセット [【無料】WebPhotoStand【VRChat】](https://namanonamako.booth.pm/items/4702922)もおすすめです。
 - 適切にUdonの同期処理を行うことで、インスタンス内のユーザー全員で同じ画像を鑑賞することが可能です。
 
 ## 👷必要なもの
@@ -25,17 +27,18 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
 
 ## 🔧オプション設定
 
-初期設定では投稿リストから**ランダム抽出**で画像化する投稿が選ばれますが、**新着順**に投稿を選出することも可能です。
-- [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`df_selected_urls`の実装方法2種類の片方をコメントアウトすることで[ランダム/新着]を選択できます。
+1. 初期設定では投稿リストから**ランダム抽出**で画像化する投稿が選ばれますが、**新着順**に投稿を選出することも可能です。
+   - [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`df_selected_urls`の実装方法2種類の片方をコメントアウトすることで[ランダム/新着]を選択できます。
 
-同じURLに対する画像の差し替え頻度は初期設定では1日一回（日替わり）ですが、もっと短いスパンに変更することも可能です。
+2. 同じURLに対する画像の差し替え頻度は初期設定では1日一回（日替わり）ですが、もっと短いスパンに変更することも可能です。
 - [upload_randam_images.yml](.github/workflows/upload_randam_images.yml)の`schedule:`のcronを書き換えることで、例えば3時間ごとの更新にもできます。
     - 2025年2月現在、GitHub無料アカウントはGitHub Actionsの実行時間が2000分/月に制限されています。
     - このCI/CDの実行時間は3分程度のため、GitHub無料アカウントにおける最短実行間隔は約70分に1回だと考えられます。
 
-Xの投稿をリストに収集する頻度と一回当たりの収集数は、Xの開発者アカウントのグレードに依存します。
-- 2025年2月現在、無料アカウントは100回&50件/月に制限されています。
-- [update_urls_list.yml](.github/workflows/update_urls_list.yml)の`schedule:`のcronと、[x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)の`n_days`と`max_results`を書き換えることで頻度と収集数を調整できますが、前述の制限により無料アカウントではほとんど増やすことができません。
+3. Xの投稿をリストに収集する頻度と一回当たりの収集数は、Xの開発者アカウントのグレードに依存します。
+   - 2025年2月現在、無料アカウントは100回&50件/月に制限されています。
+   - [update_urls_list.yml](.github/workflows/update_urls_list.yml)の`schedule:`のcronと、[x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)の`n_days`と`max_results`を書き換えることで頻度と収集数を調整できますが、前述の制限により無料アカウントではほとんど増やすことができません。
+     - 投稿頻度の高いハッシュタグを漏れなく収集したい場合には、X開発者アカウントのアップグレードをおすすめします。
 
 ## 🧑‍💻使い方
 
