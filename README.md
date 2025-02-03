@@ -25,7 +25,7 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
 ## オプション設定
 
 初期設定では投稿リストからランダム抽出で画像化する投稿が選ばれますが、新着順に投稿を選出することも可能です。
-- [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の中身をコメントアウトすることで[ランダム/新着]を選択できます。
+- [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`df_selected_urls`の実装方法2種類の片方をコメントアウトすることで[ランダム/新着]を選択できます。
 
 同じURLに対する画像の差し替え頻度は初期設定では1日一回（日替わり）ですが、もっと短いスパンに変更することも可能です。
 - [upload_randam_images.yml](.github/workflows/upload_randam_images.yml)の`schedule:`のcronを書き換えることで、例えば3時間ごとの更新にもできます。
