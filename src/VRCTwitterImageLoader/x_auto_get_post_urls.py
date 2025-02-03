@@ -249,7 +249,7 @@ if __name__ == "__main__":
         raise Exception("環境変数 X_BEARER_TOKEN が設定されていません。")
 
     # 各種パラメータの設定
-    x_hash_tag_str = "#Quest散歩"
+    x_hash_tag_str = "#インターネットのぽまえ"
     n_days = 5
     max_results = 30
 
