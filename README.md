@@ -1,12 +1,13 @@
-# VRCTwitterImageLoader
+# ⚡️VRCTwitterImageLoader
 
 X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリストにまとめ、そのリストから任意の数の投稿を選び、GitHub Pagesに画像として自動で配信するシステムです。
 
 このGitHub Pagesの画像URLは固定のため、例えばVRChatのImage Loadingの仕組みと組み合わせることで、ワールド内でXの投稿を眺めることが可能です。
 
-**すべての動作はGitHub上で完結しているため、サーバを個人で建てる必要がありません。**
-
-**2025年2月現在、無料ですべてのプログラムが動作します。**
+>[!NOTE]
+> **すべての動作はGitHub上で完結しているため、サーバを個人で建てる必要がありません。**
+> 
+> **2025年2月現在、無料ですべてのプログラムが動作します。**
 
 使用例: https://x.com/Ring_Say_rip/status/1731264158828753358
 - VRChatでこのシステムの画像を読み込むのは簡単ですが、前提としてワールド制作の知識が必要です。
@@ -14,7 +15,7 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
     - Udon SharpでImage Loadingを実装する一例として、namanonamako 氏のアセット [【無料】WebPhotoStand【VRChat】](https://namanonamako.booth.pm/items/4702922)がおすすめです。
 - 適切にUdonの同期処理を行うことで、インスタンス内のユーザー全員で同じ画像を鑑賞することが可能です。
 
-## 必要なもの
+## 👷必要なもの
 どちらも無料アカウントで構いません（ただし実行頻度の上限がそれぞれ存在します）。
 - GitHubアカウント
     - 設定ファイルの変更と定期実行を行うために必要です。
@@ -22,9 +23,9 @@ X (Twitter)の投稿のうち、特定のハッシュタグの投稿をリスト
     - X開発者アカウント(後述)を発行するために必要です
 
 
-## オプション設定
+## 🔧オプション設定
 
-初期設定では投稿リストからランダム抽出で画像化する投稿が選ばれますが、新着順に投稿を選出することも可能です。
+初期設定では投稿リストから**ランダム抽出**で画像化する投稿が選ばれますが、**新着順**に投稿を選出することも可能です。
 - [twitter_image.py](src/VRCTwitterImageLoader/twitter_image.py)の`df_selected_urls`の実装方法2種類の片方をコメントアウトすることで[ランダム/新着]を選択できます。
 
 同じURLに対する画像の差し替え頻度は初期設定では1日一回（日替わり）ですが、もっと短いスパンに変更することも可能です。
@@ -36,7 +37,7 @@ Xの投稿をリストに収集する頻度と一回当たりの収集数は、X
 - 2025年2月現在、無料アカウントは100回&50件/月に制限されています。
 - [update_urls_list.yml](.github/workflows/update_urls_list.yml)の`schedule:`のcronと、[x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)の`n_days`と`max_results`を書き換えることで頻度と収集数を調整できますが、前述の制限により無料アカウントではほとんど増やすことができません。
 
-## 使い方
+## 🧑‍💻使い方
 
 ### GitHub Actionsを用いた完全自動化
 少しの操作が必要です。ほぼGitHubのUI上で行えます。
@@ -87,11 +88,12 @@ Xの投稿をリストに収集する頻度と一回当たりの収集数は、X
     - 最後に「Delete branch」をクリックするとPR用に作成されたブランチが削除されて完了
 
 ### ローカルで動作確認
-**-----基本的にこれより下の操作を行う必要はありません。-----** 
-
-ローカル環境で動作確認をしたい特殊な人向けの説明です。
-
-ローカル実行の場合、GitHub Pagesへの画像アップロードは実行されません。
+> [!IMPORTANT]  
+> **-----基本的にこれより下の操作を行う必要はありません。-----** 
+> 
+> ローカル環境で動作確認をしたい特殊な人向けの説明です。
+> 
+> ローカル実行の場合、GitHub Pagesへの画像アップロードは実行されません。
 
 - 動作確認済環境
     - Windows11
@@ -121,7 +123,7 @@ $ export X_BEARER_TOKEN=xxxxxxx
 $ uv run python src/VRCTwitterImageLoader/x_auto_get_post_urls.py
 ```
 
-## Tips
+## 💡Tips
 ```shell
 # formatterを実行
 $ uv run ruff format
@@ -129,8 +131,8 @@ $ uv run ruff format
 $ uv run ruff check --fix
 ```
 
-## 既知の不具合
+## 🚧既知の不具合
 HTMLレンダリングが失敗した状態で画像が保存されてしまう場合があります。現在は失敗を検知して4回まで再トライするようになっています。
 
-## その他
+## 🍻その他
 不具合報告などの手順は[CONTRIBUTING](CONTRIBUTING.md)をご確認ください。
