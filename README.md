@@ -44,8 +44,8 @@ Xの投稿をリストに収集する頻度と一回当たりの収集数は、X
 1. URLリストである[urls_orig_date.csv](src/VRCTwitterImageLoader/data/urls_orig_date.csv)を自身の収集対象のXの投稿のURLに変更してください。
     - 動作するためには少なくとも10件の投稿が必要です。
     - `url`列と`date`列の2列がカンマ区切りで必要です。
-1. [x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)内の変数`x_hash_tag_str`を収集対象のハッシュタグに変更してください。
-    - 初期設定では`#Quest散歩`になっています。
+1. [x_auto_get_post_urls.py](src/VRCTwitterImageLoader/x_auto_get_post_urls.py)の最終行付近で定義されている変数`x_hash_tag_str`の値を収集対象のハッシュタグに変更してください。
+    - 初期設定では`x_hash_tag_str = "#Quest散歩"`になっています。
 1. [X開発者ページ](https://developer.twitter.com/en/portal/dashboard)にログイン(Freeアカウントでも可)し、BEARER TOKENを発行してください。
 1. GitHub ActionsのRepository Secretsに4.で発行したTokenの値を保存してください。
     - 「Settings」→「Security」→「Actions」→「Repository secrets」セクションで、「New Repository secret」をクリック
